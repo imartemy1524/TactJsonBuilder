@@ -1,6 +1,6 @@
-import { Blockchain, SandboxContract, TreasuryContract } from '@ton/sandbox';
+import { Blockchain, printTransactionFees, SandboxContract, TreasuryContract } from '@ton/sandbox';
 import { Dictionary, toNano } from '@ton/core';
-import { JsonBuilder } from '../wrappers/JsonBuilder';
+import { Employee, JsonBuilder } from '../wrappers/JsonBuilder';
 import '@ton/test-utils';
 
 describe('JsonBuilder', () => {
@@ -40,15 +40,16 @@ describe('JsonBuilder', () => {
             { value: toNano('1') },
             {
                 $$type: 'MapMessage',
-                value: new Dictionary<bigint, Employee>()
-                    .set(123, { name: 'Ivan', age: 19, salary: toNano('10') })
-                    .set(124, { name: 'Petr', age: 20, salary: toNano('20') })
-                    .set(1923, { name: 'Sidor', age: 21, salary: toNano('30') }),
+                data: Dictionary.empty<bigint, Employee>()
+                    .set(123n, { name: 'Ivan', age: 19n, salary: toNano('10'), $$type: 'Employee' })
+                    .set(124n, { name: 'Petr', age: 20n, salary: toNano('20'), $$type: 'Employee' })
+                    .set(1923n, { name: 'Sidor', age: 21n, salary: toNano('30'), $$type: 'Employee' }),
             },
         );
+        printTransactionFees(transactions);
         expect(transactions).toHaveTransaction({
             from: jsonBuilder.address,
-            to: jsonBuilder.address,
+            to: deployer.address,
             body: (body) => {
                 try {
                     const data = body!.beginParse();

@@ -13,14 +13,14 @@ contract JsonBuilder with Deployable {
     receive(m: MapMessage){
         let builder = createJsonArray();
         foreach(key, value in m.data){
-            builder = builder.appendToArray(
+            builder = builder.appendObject(
                 createJsonObject()
-                    .appendToObject("name", creteJsonString(value.name))
-                    .appendToObject("age", createJsonNumber(value.age))
-                    .appendToObject("salary", createJsonCoins(value.salary))
+                    .appendString("name",value.name)
+                    .appendNumber("age", value.age)
+                    .appendCoins("salary", value.salary)
             );
         }
         let json = builder.toString();
-        self.reply(json);
+        self.reply(json.asComment());
     }
 }
